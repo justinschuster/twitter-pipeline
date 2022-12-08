@@ -12,5 +12,6 @@ TODO:
 
 RISK FACTORS
 - api rate limit
+    - 2 million per month
 - differentiating programming languages from other things
     - Python (code) vs python (pet)

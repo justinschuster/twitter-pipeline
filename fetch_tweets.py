@@ -1,7 +1,6 @@
 # Retrieve tweets
 import requests
 import json
-import pandas as pd
 
 import config
 
@@ -10,7 +9,7 @@ class Results:
     Class to handle pagination of results
     """
     
-    def __init__(self, endpoint, bearer_token, max_results=500) -> None:
+    def __init__(self, bearer_token, end_point=None, max_results=500) -> None:
         self.bearer_token = bearer_token
         self.max_results = max_results
         self.max_requests = 3
@@ -19,9 +18,13 @@ class Results:
         self.session = None
         self.next_token = None
         self.stream_started = False
-        self.endpoint = endpoint
         self.current_tweets = None
         
+        if end_point:
+            self.endpoint = end_point
+        else:
+            self.endpoint = self.endpoint_builder()
+
         headers = {
             'Content-type': 'application/json',
             'User-Agent': 'language-meter',
@@ -70,7 +73,11 @@ class Results:
         with open('json/sample.json', 'w') as out:
             json.dump(self.current_tweets, out)
 
+    def endpoint_builder(self):
+        language = 'python'
+        url = 'https://api.twitter.com/2/tweets/search/recent?query={}&max_results={}'.format(language, self.max_results)
+        return url
+
 if __name__ == "__main__":
-    url = 'https://api.twitter.com/2/tweets/search/recent?query=python'
-    results = Results(url, config.BEARER_TOKEN)
+    results = Results(bearer_token=config.BEARER_TOKEN, max_results=100)
     results.stream_results()
