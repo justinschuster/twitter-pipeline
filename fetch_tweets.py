@@ -5,11 +5,6 @@ import pandas as pd
 
 import config
 
-def combine_dicts(dict1, dict2):
-    merged = []
-    print(dict2)
-    return merged
-
 class Results:
     """
     Class to handle pagination of results
@@ -69,7 +64,7 @@ class Results:
         self.n_requests += 1
         resp = json.loads(resp.content.decode(resp.encoding))
         self.next_token = resp['meta']['next_token']
-        self.current_tweets = resp
+        self.current_tweets = resp['data']
     
     def write_json(self):
         with open('json/sample.json', 'w') as out:
