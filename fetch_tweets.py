@@ -9,15 +9,16 @@ class Results:
     Class to handle pagination of results
     """
     
-    def __init__(self, bearer_token, end_point=None, max_results=500) -> None:
+    def __init__(self, bearer_token, end_point=None, max_query_results=100, max_results=500) -> None:
         self.bearer_token = bearer_token
-        self.max_results = max_results
-        self.max_requests = 3
-        self.total_results = 0
-        self.n_requests = 0
         self.session = None
         self.next_token = None
         self.stream_started = False
+        self.max_results = max_results
+        self.total_results = 0
+        self.max_query_results = max_query_results
+        self.max_requests = 3
+        self.n_requests = 0
         self.current_tweets = None
         
         if end_point:
@@ -51,7 +52,7 @@ class Results:
             for tweet in self.current_tweets:
                 if self.total_results >= self.max_results:
                     break
-                    self.total_results += 1
+                self.total_results += 1
             
             if self.next_token and self.total_results < self.max_results and self.n_requests < self.max_requests:
                 self.make_request()
@@ -66,7 +67,10 @@ class Results:
         resp = requests.get(url=self.endpoint, headers=self.headers)
         self.n_requests += 1
         resp = json.loads(resp.content.decode(resp.encoding))
-        self.next_token = resp['meta']['next_token']
+
+        # Add error handling for KeyError 'meta'
+        self.next_token = resp['meta']['next_token'] 
+
         self.current_tweets = resp['data']
     
     def write_json(self):
@@ -75,9 +79,9 @@ class Results:
 
     def endpoint_builder(self):
         language = 'python'
-        url = 'https://api.twitter.com/2/tweets/search/recent?query={}&max_results={}'.format(language, self.max_results)
+        url = 'https://api.twitter.com/2/tweets/search/recent?query={}&max_results={}'.format(language, self.max_query_results)
         return url
 
 if __name__ == "__main__":
-    results = Results(bearer_token=config.BEARER_TOKEN, max_results=100)
+    results = Results(bearer_token=config.BEARER_TOKEN)
     results.stream_results()
