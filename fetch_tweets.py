@@ -77,9 +77,13 @@ class Results:
         with open('json/sample.json', 'w') as out:
             json.dump(self.current_tweets, out)
 
-    def endpoint_builder(self):
+    def endpoint_builder(self, id=None):
         language = 'python'
-        url = 'https://api.twitter.com/2/tweets/search/recent?query={}&max_results={}'.format(language, self.max_query_results)
+        url = 'https://api.twitter.com/2/tweets/'
+        if id:
+            print('id is here')
+        else:
+            url = url + 'search/recent?query={}&max_results={}'.format(language, self.max_query_results)
         return url
 
 if __name__ == "__main__":
