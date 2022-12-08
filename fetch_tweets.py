@@ -1,8 +1,7 @@
 # Retrieve tweets
 import requests
-from requests_oauthlib import OAuth1Session
-from oauthlib.oauth2 import BackendApplicationClient
 import json
+import pandas as pd
 
 import config
 
@@ -17,7 +16,10 @@ def get_tweets():
     headers['Authorization'] = 'Bearer {}'.format(BEARER_TOKEN)
 
     resp = requests.get(url, headers=headers)
-    print(resp.text)
-    
+    json_data = json.loads(resp.text)
+
+    with open('json/sample.json', 'w+') as out:
+        json.dump(json_data, out)
+        
 if __name__ == "__main__":
     get_tweets()
