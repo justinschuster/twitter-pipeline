@@ -5,6 +5,10 @@ Uses Twitter to gauge daily programming language interest
 Technologies Used:
 - Twitter Api
 - Python
+- AWS lambda
+- AWS s3
+- AWS Redshift
+- *maybe* GCP Data Studio
 
 TODO:
 - streaming twitter api response
