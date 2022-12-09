@@ -1,4 +1,5 @@
 import boto3
+import json
 import os
 
 import config
@@ -21,11 +22,10 @@ def init_s3_client():
     )
     return s3_client
 
-def upload_to_s3(json_path, json_data, csv_path, csv_buffer):
+def upload_to_s3(json_path, json_data, csv_path, csv_buffer) -> None:
     s3 = init_s3_client()
     s3.put_object(body=json.dumps(json_data), bucket=s3_bucket, key=json_path, contenttype='application/json')
     s3.put_object(body=csv_buffer.getvalues(), bucket=s3_bucket, key=csv_path)
-
 
 def print_file_names():
     json_path = 'language-meter/json'

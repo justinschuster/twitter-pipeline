@@ -5,8 +5,9 @@ import requests
 import pandas as pd
 
 import config
-import load
-import transform
+
+from load import *
+from transform import *
 
 # Maybe move this class to an Extract file or maybe not
 # maybe just move extract logic to extract.py
@@ -37,7 +38,8 @@ class Results:
         headers = {
             'Content-type': 'application/json',
             'User-Agent': 'language-meter',
-            'Authorization': 'Bearer {}'.format(self.bearer_token)}
+            'Authorization': 'Bearer {}'.format(self.bearer_token)
+        }
         self.headers = headers
 
     def init_session(self):
@@ -85,11 +87,12 @@ class Results:
                 break
         
         language = 'python'
-        json_data = transform.create_json_data(self.current_tweets)
-        csv_buffer = transform.create_csv_data(self.current_tweets)
-        json_path = transform.create_csv_path(language)
-        csv_path = transform.create_csv_path(language)
-        load.upload_to_s3(json_data, json_path, csv_buffer, csv_path)
+        upload_to_s3(
+            create_json_data(self.current_tweets),
+            create_csv_data(self.current_tweets),
+            create_json_path(language),
+            create_csv_path(language)
+        )
         self.current_tweets = None
         self.session.close()
 
@@ -112,8 +115,9 @@ class Results:
     def write_json(self):
         """
         Writes request response to json.
-        """
 
+        Depreciated.
+        """
         with open('json/sample.json', 'w') as out:
             json.dump(self.current_tweets, out)
         # upload to S3 
@@ -121,6 +125,8 @@ class Results:
     def write_csv(self):
         """
         Writes request response to csv file.
+
+        Depreciated.
         """
         csv_data = pd.json_normalize(self.current_tweets, max_level=1) 
         csv_buffer = StringIO()
@@ -133,16 +139,16 @@ class Results:
         """
         pass
 
-    def endpoint_builder(self, id=None):
+    def endpoint_builder(self, id=None) -> str:
         """
         Creates target end point for API queries.
         """
         language = 'python'
-        url = 'https://api.twitter.com/2/tweets/'
+        url = 'https://api.twitter.com/2/tweets'
         if id:
             print('id is here')
         else:
-            url = url + 'search/recent?query={}&max_results={}'.format(language, self.max_query_results)
+            url = '{}/search/recent?query={}&max_results={}'.format(url, language, self.max_query_results)
         return url
 
 if __name__ == "__main__":

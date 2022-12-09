@@ -4,14 +4,14 @@ import time
 import json
 import pandas as pd
 
-def create_json_data(tweet_data):
+def create_json_data(tweet_data) -> list:
     """
     Creates json data for loading into S3 Bucket
     """
     json_data = json.loads(tweet_data.content.decode(tweet_data.encoding))
     return json_data
 
-def create_csv_data(tweet_data):
+def create_csv_data(tweet_data) -> str:
     """
     Creates csv data for loading into S3 bucket.
     """
@@ -20,7 +20,7 @@ def create_csv_data(tweet_data):
     csv_data.to_csv(csv_buffer, header=True, index=False)
     return csv_data
 
-def create_json_path(language):
+def create_json_path(language) -> str:
     """
     Specifies json path for S3 bucket
     """
@@ -28,7 +28,7 @@ def create_json_path(language):
     json_path = 'json/{}/{}'.format(language, time_epoch)
     return json_path
 
-def create_csv_path(language):
+def create_csv_path(language) -> str:
     """
     Specifies csv path for S3 bucket
     """

@@ -5,3 +5,4 @@ json/sample.json
 .vscode/*
 language-meter/__pycache__/*
 language-meter/lambda_function/__pycache__/*
+language-meter/json/sample.json
