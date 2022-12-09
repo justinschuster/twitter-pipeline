@@ -5,7 +5,11 @@ import requests
 import pandas as pd
 
 import config
+import load
+import transform
 
+# Maybe move this class to an Extract file or maybe not
+# maybe just move extract logic to extract.py
 class Results:
     """
     Class to handle pagination of results
@@ -79,9 +83,13 @@ class Results:
                 self.make_request()
             else:
                 break
-
-        self.write_json()
-        self.write_csv()
+        
+        language = 'python'
+        json_data = transform.create_json_data(self.current_tweets)
+        csv_buffer = transform.create_csv_data(self.current_tweets)
+        json_path = transform.create_csv_path(language)
+        csv_path = transform.create_csv_path(language)
+        load.upload_to_s3(json_data, json_path, csv_buffer, csv_path)
         self.current_tweets = None
         self.session.close()
 
@@ -92,6 +100,8 @@ class Results:
 
         resp = requests.get(url=self.endpoint, headers=self.headers)
         self.n_requests += 1
+
+        # Might need to remove this and move it to transform. Not sure
         resp = json.loads(resp.content.decode(resp.encoding))
 
         # Add error handling for KeyError 'meta'
@@ -117,6 +127,12 @@ class Results:
         csv_data.to_csv(csv_buffer, header=True, index=False)
         # upload to S3
 
+    def upload(self):
+        """
+        Wrapper for load. Not sure if good idea 
+        """
+        pass
+
     def endpoint_builder(self, id=None):
         """
         Creates target end point for API queries.
@@ -130,5 +146,7 @@ class Results:
         return url
 
 if __name__ == "__main__":
+    # Maybe move the above class to extract.py
+    # then create another file to run everything
     results = Results(bearer_token=config.BEARER_TOKEN)
     results.stream_results()
