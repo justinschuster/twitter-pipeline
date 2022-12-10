@@ -24,8 +24,8 @@ def init_s3_client():
 
 def upload_to_s3(json_path, json_data, csv_path, csv_buffer) -> None:
     s3 = init_s3_client()
-    s3.put_object(body=json.dumps(json_data), bucket=s3_bucket, key=json_path, contenttype='application/json')
-    s3.put_object(body=csv_buffer.getvalues(), bucket=s3_bucket, key=csv_path)
+    s3.put_object(Body=json.dumps(json_data), Bucket=s3_bucket, Key=json_path, ContentType='application/json')
+    s3.put_object(Body=csv_buffer.getvalue(), Bucket=s3_bucket, Key=csv_path)
 
 def print_file_names():
     json_path = 'language-meter/json'

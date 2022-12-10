@@ -88,10 +88,10 @@ class Results:
         
         language = 'python'
         upload_to_s3(
-            create_json_data(self.current_tweets),
-            create_csv_data(self.current_tweets),
             create_json_path(language),
-            create_csv_path(language)
+            create_json_data(self.current_tweets),
+            create_csv_path(language),
+            create_csv_data(self.current_tweets)
         )
         self.current_tweets = None
         self.session.close()
@@ -111,33 +111,6 @@ class Results:
         self.next_token = resp['meta']['next_token'] 
 
         self.current_tweets = resp['data']
-
-    def write_json(self):
-        """
-        Writes request response to json.
-
-        Depreciated.
-        """
-        with open('json/sample.json', 'w') as out:
-            json.dump(self.current_tweets, out)
-        # upload to S3 
-
-    def write_csv(self):
-        """
-        Writes request response to csv file.
-
-        Depreciated.
-        """
-        csv_data = pd.json_normalize(self.current_tweets, max_level=1) 
-        csv_buffer = StringIO()
-        csv_data.to_csv(csv_buffer, header=True, index=False)
-        # upload to S3
-
-    def upload(self):
-        """
-        Wrapper for load. Not sure if good idea 
-        """
-        pass
 
     def endpoint_builder(self, id=None) -> str:
         """
